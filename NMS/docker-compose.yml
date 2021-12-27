@@ -1,0 +1,37 @@
+---
+version: '3'
+
+#volumes:
+#  data-postgres: {}
+
+services:
+  database:
+    image: postgres:14
+    container_name: database
+    environment:
+      TZ: 'America/New_York'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'password'
+#    volumes:
+#      -
+    ports:
+      - '5432:5432/tcp'
+
+  opennms:
+    image: opennms/horizon:bleeding
+    container_name: opennms
+    environment:
+      TZ: 'America/New_York'
+      POSTGRES_HOST: 'database'
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'password'
+      OPENNMS_DBNAME: 'opennms-core-db'
+      OPENNMS_DBUSER: 'opennms'
+      OPENNMS_DBPASS: 'password'
+    command: ["-s"]
+    ports:
+      - '8980:8980/tcp'
+      - '8101:8101/tcp'
+      - '162:162/udp'
+      - '10162:10162/udp'
